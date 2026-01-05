@@ -58,3 +58,88 @@ This backend will support various functionalities required to mimic the core fea
 
 **CI/CD Pipelines**
 : Automated pipelines for testing and deploying code changes.
+
+## Database Design
+
+The application uses a relational database to model core AirBnB domain concepts. The schema is designed to ensure data integrity, scalability, and clear relationships between entities.
+
+### Users
+Represents all platform users, including guests and hosts.
+
+**Key Fields**
+- `id` (UUID, Primary Key)
+- `email` (String, unique)
+- `password_hash` (String)
+- `role` (Enum: guest, host, admin)
+- `created_at` (Timestamp)
+
+**Relationships**
+- A user can own multiple properties
+- A user can make multiple bookings
+- A user can write multiple reviews
+
+---
+
+### Properties
+Represents properties listed by hosts.
+
+**Key Fields**
+- `id` (UUID, Primary Key)
+- `user_id` (Foreign Key → Users.id)
+- `title` (String)
+- `location` (String)
+- `price_per_night` (Decimal)
+
+**Relationships**
+- A property belongs to one user (host)
+- A property can have multiple bookings
+- A property can have multiple reviews
+
+---
+
+### Bookings
+Represents reservations made by users for properties.
+
+**Key Fields**
+- `id` (UUID, Primary Key)
+- `user_id` (Foreign Key → Users.id)
+- `property_id` (Foreign Key → Properties.id)
+- `start_date` (Date)
+- `end_date` (Date)
+
+**Relationships**
+- A booking belongs to one user
+- A booking belongs to one property
+- A booking can have one associated payment
+
+---
+
+### Reviews
+Represents user feedback on properties.
+
+**Key Fields**
+- `id` (UUID, Primary Key)
+- `user_id` (Foreign Key → Users.id)
+- `property_id` (Foreign Key → Properties.id)
+- `rating` (Integer)
+- `comment` (Text)
+
+**Relationships**
+- A review belongs to one user
+- A review belongs to one property
+
+---
+
+### Payments
+Represents payment transactions for bookings.
+
+**Key Fields**
+- `id` (UUID, Primary Key)
+- `booking_id` (Foreign Key → Bookings.id)
+- `amount` (Decimal)
+- `payment_method` (String)
+- `status` (Enum: pending, completed, failed)
+
+**Relationships**
+- A payment belongs to one booking
+- Each booking is associated with one payment
